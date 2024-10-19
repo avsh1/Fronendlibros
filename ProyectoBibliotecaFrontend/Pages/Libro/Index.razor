@@ -1,0 +1,77 @@
+﻿@page "/libro/index"
+@inject HttpClient httpClient
+@inject NavigationManager navigationManager
+@inject ILocalStorageService _localStorageService
+
+<MudText Typo="Typo.h2" Class="ml">Libros</MudText>
+
+<MudTable Items="@filteredLibros" Dense="true" Hover="true" Bordered="true" Striped="true">
+    <ToolBarContent>
+        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="goAdd" />
+        <MudSpacer />
+        <MudTextField @bind-Value="searchText" Placeholder="Buscar por título o autor" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Id</MudTh>
+        <MudTh>Título</MudTh>
+        <MudTh>Autor</MudTh>
+        <MudTh>Editorial</MudTh>
+        <MudTh>Categoría</MudTh>
+        <MudTh>Fecha de Publicación</MudTh>
+        <MudTh>Acciones</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="Título">@context.Titulo</MudTd>
+        <MudTd DataLabel="Autor">
+            @(context.Autor != null ? context.Autor.Nombre : "Sin autor")
+        </MudTd>
+        <MudTd DataLabel="Editorial">
+            @(context.Editorial != null ? context.Editorial.Nombre : "Sin editorial")
+        </MudTd>
+        <MudTd DataLabel="Categoría">
+            @(context.Categoria != null ? context.Categoria.Nombre : "Sin categoría")
+        </MudTd>
+        <MudTd DataLabel="Fecha de Publicación">@context.Publicacion.ToShortDateString()</MudTd>
+
+        <MudTd>
+            <MudButton Href="@($"/libro/editar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined"
+                       Color="Color.Tertiary" Class="text-center">Editar</MudButton>
+            <MudButton Href="@($"/libro/eliminar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined"
+                       Color="Color.Warning" Class="text-center">Eliminar</MudButton>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private IEnumerable<Libro> libros = new List<Libro>();
+    private IEnumerable<Libro> filteredLibros =>
+        string.IsNullOrWhiteSpace(searchText)
+            ? libros
+            : libros.Where(l => l.Titulo.Contains(searchText, StringComparison.OrdinalIgnoreCase)
+                                 || (l.Autor?.Nombre.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false));
+
+    private string searchText = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", await _localStorageService.GetItemAsync<string>("token"));
+        await getAll();
+    }
+
+    private async Task getAll()
+    {
+        var httpResponse = await httpClient.GetStringAsync("libros/lista");
+        libros = JsonSerializer.Deserialize<IEnumerable<Libro>>(httpResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+    }
+
+    private void goAdd()
+    {
+        navigationManager.NavigateTo("libro/agregar");
+    }
+}

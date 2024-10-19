@@ -1,0 +1,124 @@
+﻿@page "/libro/editar/{id:int}"
+@inject HttpClient httpClient
+@inject NavigationManager navigationManager
+@inject ILocalStorageService _localStorageService
+
+<MudText Typo="Typo.h2" Class="ml">Editar Libro</MudText>
+
+<MudGrid>
+    <MudItem xs="12" sm="7">
+        <MudPaper Class="pa-4">
+            <EditForm Model="libro" OnValidSubmit="OnValidSubmit">
+                <DataAnnotationsValidator />
+                <MudCard>
+                    <MudCardContent>
+                        <MudTextField Label="Título" @bind-Value="libro.Titulo" For="@(() => libro.Titulo)" />
+                        <MudTextField Label="Fecha de Publicación" @bind-Value="libro.Publicacion" For="@(() => libro.Publicacion)" />
+
+                        <!-- Selectores para Autor, Editorial y Categoría -->
+                        <MudSelect T="int" Label="Autor" @bind-Value="libro.Autor_Id">
+                            @foreach (var autor in autores)
+                            {
+                                <MudSelectItem Value="@autor.Id">@autor.Nombre</MudSelectItem>
+                            }
+                        </MudSelect>
+
+                        <MudSelect T="int" Label="Editorial" @bind-Value="libro.EditorialId">
+                            @foreach (var editorial in editoriales)
+                            {
+                                <MudSelectItem Value="@editorial.Id">@editorial.Nombre</MudSelectItem>
+                            }
+                        </MudSelect>
+
+                        <MudSelect T="int" Label="Categoría" @bind-Value="libro.Categoria_Id">
+                            @foreach (var categoria in categorias)
+                            {
+                                <MudSelectItem Value="@categoria.Id">@categoria.Nombre</MudSelectItem>
+                            }
+                        </MudSelect>
+
+                        <MudDivider />
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton Href="@($"/libro/index")" Variant="Variant.Filled" Color="Color.Info" Class="text-center">Regresar</MudButton>
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Guardar cambios</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </EditForm>
+
+            @if (showLeaveAlert)
+            {
+                <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="(() => CloseMe(true))">
+                    Ocurrió un problema al guardar los cambios.
+                </MudAlert>
+            }
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+    private bool showLeaveAlert = false;
+    private Libro libro = new Libro();
+    private IEnumerable<Autor> autores = new List<Autor>();
+    private IEnumerable<Editorial> editoriales = new List<Editorial>();
+    private IEnumerable<Categoria> categorias = new List<Categoria>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", await _localStorageService.GetItemAsync<string>("token"));
+
+        // Obtener los detalles del libro
+        var respLibro = await httpClient.GetStringAsync($"libros/{id}");
+        libro = JsonSerializer.Deserialize<Libro>(respLibro, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+        // Cargar autores, editoriales y categorías
+        await cargarAutores();
+        await cargarEditoriales();
+        await cargarCategorias();
+    }
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        await saveChanges();
+    }
+
+    private async Task saveChanges()
+    {
+        var httpResponse = await httpClient.PutAsJsonAsync($"libros/{libro.Id}", libro);
+
+        if (httpResponse.StatusCode != System.Net.HttpStatusCode.OK)
+        {
+            showLeaveAlert = true;
+        }
+        else
+        {
+            navigationManager.NavigateTo("/libro/index");
+        }
+    }
+
+    private void CloseMe(bool value)
+    {
+        showLeaveAlert = false;
+    }
+
+    private async Task cargarAutores()
+    {
+        var resp = await httpClient.GetStringAsync("autores/lista");
+        autores = JsonSerializer.Deserialize<IEnumerable<Autor>>(resp, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+    }
+
+    private async Task cargarEditoriales()
+    {
+        var resp = await httpClient.GetStringAsync("editoriales/lista");
+        editoriales = JsonSerializer.Deserialize<IEnumerable<Editorial>>(resp, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+    }
+
+    private async Task cargarCategorias()
+    {
+        var resp = await httpClient.GetStringAsync("categorias/lista");
+        categorias = JsonSerializer.Deserialize<IEnumerable<Categoria>>(resp, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+    }
+}
