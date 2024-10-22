@@ -15,15 +15,14 @@
                     <MudCardContent>
                         <MudTextField Label="Nombre" @bind-Value="cliente.Nombre" For="@(() => cliente.Nombre)" Disabled="true" />
                         <MudTextField Label="Dirección" @bind-Value="cliente.Direccion" For="@(() => cliente.Direccion)" Disabled="true" />
-                        <MudDatePicker Label="Fecha de Registro" @bind-Date="fechaRegistro" />
                         <MudTextField Label="Correo" @bind-Value="cliente.Correo" For="@(() => cliente.Correo)" Disabled="true" />
                         <MudTextField Label="Teléfono" @bind-Value="cliente.Telefono" For="@(() => cliente.Telefono)" Disabled="true" />
-                        <MudTextField Label="Estado" Value="@(cliente.Estado ? "Activo" : "Inactivo")" Disabled="true" />
+                        <MudTextField Label="Fecha de Registro" @bind-Value="cliente.FechaRegistro" For="@(() => cliente.FechaRegistro)" InputType="InputType.Date" Disabled="true" />
+                        <MudTextField Label="Estado" @bind-Value="cliente.Estado" For="@(() => cliente.Estado)" Disabled="true" />
                         <MudDivider />
                     </MudCardContent>
                     <MudCardActions>
-                        <MudButton Href="@($"/cliente/index")" Variant="Variant.Filled" Color="Color.Info"
-                                   Class="text-center">Regresar</MudButton>
+                        <MudButton Href="@($"/cliente/index")" Variant="Variant.Filled" Color="Color.Info" Class="text-center">Regresar</MudButton>
                         <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Error" Class="ml-auto">Eliminar</MudButton>
                     </MudCardActions>
                 </MudCard>
@@ -39,10 +38,8 @@
 @code {
     [Parameter]
     public int id { get; set; }
-    
-    Cliente cliente = new Cliente();
-    private DateTime? fechaRegistro = DateTime.Today;
     private bool showLeaveAlert = false;
+    private Cliente cliente = new Cliente();
 
     protected override async Task OnInitializedAsync()
     {
@@ -77,4 +74,3 @@
         showLeaveAlert = false;
     }
 }
-
