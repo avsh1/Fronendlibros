@@ -1,0 +1,114 @@
+﻿@page "/prestamo/agregar"
+
+@inject HttpClient httpClient
+@inject NavigationManager navigationManager
+@inject ILocalStorageService _localStorageService
+
+<MudText Typo="Typo.h2" Class="ml">Nuevo Préstamo</MudText>
+<MudGrid>
+    <MudItem xs="12" sm="7">
+        <MudPaper Class="pa-4">
+            <EditForm Model="prestamo" OnValidSubmit="OnValidSubmit">
+                <DataAnnotationsValidator />
+                <MudCard>
+                    <MudCardContent>
+                        <MudSelect Variant="Variant.Outlined" Label="Libro" AnchorOrigin="Origin.BottomCenter"
+                                   @bind-Value="libroSeleccionado">
+                            @foreach (var item in libros)
+                            {
+                                <MudSelectItem Value="@item.Id">@item.Titulo</MudSelectItem>
+                            }
+                        </MudSelect>
+                        <MudDivider />
+
+                        <MudSelect Variant="Variant.Outlined" Label="Cliente" AnchorOrigin="Origin.BottomCenter"
+                                   @bind-Value="clienteSeleccionado">
+                            @foreach (var item in clientes)
+                            {
+                                <MudSelectItem Value="@item.Id">@item.Nombre</MudSelectItem>
+                            }
+                        </MudSelect>
+                        <MudDivider />
+
+                        <MudTextField Label="Status" @bind-Value="prestamo.Status" For="@(() => prestamo.Status)" />
+                        <MudTextField Label="Fecha de Préstamo" @bind-Value="prestamo.FechaPrestamo" For="@(() => prestamo.FechaPrestamo)" />
+                        <MudTextField Label="Fecha de Devolución" @bind-Value="prestamo.FechaDevolucion" For="@(() => prestamo.FechaDevolucion)" />
+                        <MudTextField Label="Encargado" @bind-Value="prestamo.Encargado" For="@(() => prestamo.Encargado)" />
+                    </MudCardContent>
+
+                    <MudCardActions>
+                        <MudButton Href="@($"/prestamo/index")" Variant="Variant.Filled" Color="Color.Info" Class="text-center">Regresar</MudButton>
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Guardar</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </EditForm>
+            @if (showLeaveAlert)
+            {
+                <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="(() => CloseMe(true))">No se pudo guardar.</MudAlert>
+            }
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private IEnumerable<Libro> libros = new List<Libro>();
+    private IEnumerable<Cliente> clientes = new List<Cliente>();
+
+    private bool showLeaveAlert = false;
+    private Prestamo prestamo = new Prestamo();
+    private int libroSeleccionado;
+    private int clienteSeleccionado;
+
+    protected override async Task OnInitializedAsync()
+    {
+        httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", await _localStorageService.GetItemAsync<string>("token"));
+        await getLibros();
+        await getClientes();
+    }
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        if (libroSeleccionado == 0 || clienteSeleccionado == 0)
+        {
+            showLeaveAlert = true;
+            return; // Sale del método si no hay un libro/cliente seleccionado
+        }
+        await save();
+        StateHasChanged();
+    }
+
+    private async Task save()
+    {
+        prestamo.Libro_Id = libroSeleccionado;
+        prestamo.ClienteId = clienteSeleccionado;
+
+        var httpResponse = await httpClient.PostAsJsonAsync<Prestamo>("prestamos", prestamo);
+
+        if (!(httpResponse.StatusCode == System.Net.HttpStatusCode.OK))
+        {
+            showLeaveAlert = true;
+        }
+        else
+        {
+            navigationManager.NavigateTo("prestamo/index");
+        }
+    }
+
+    private void CloseMe(bool value)
+    {
+        showLeaveAlert = false;
+    }
+
+    private async Task getLibros()
+    {
+        var httpResponse = await httpClient.GetStringAsync("libros/lista");
+        libros = JsonSerializer.Deserialize<IEnumerable<Libro>>(httpResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+    }
+
+    private async Task getClientes()
+    {
+        var httpResponse = await httpClient.GetStringAsync("clientes/lista");
+        clientes = JsonSerializer.Deserialize<IEnumerable<Cliente>>(httpResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+    }
+}

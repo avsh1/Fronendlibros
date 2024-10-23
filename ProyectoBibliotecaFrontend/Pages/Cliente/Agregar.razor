@@ -55,7 +55,7 @@
     private async Task save()
     {
         
-        var httpResponse = await httpClient.PostAsJsonAsync<Cliente>("clientes", cliente);
+        var httpResponse = await httpClient.PostAsJsonAsync<Cliente>("cliente", cliente);
 
         if (!(httpResponse.StatusCode == System.Net.HttpStatusCode.OK))
         {

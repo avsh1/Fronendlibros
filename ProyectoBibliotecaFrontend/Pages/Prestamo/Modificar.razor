@@ -1,0 +1,113 @@
+﻿@page "/prestamo/editar/{id:int}"
+@inject HttpClient httpClient
+@inject NavigationManager navigationManager
+@inject ILocalStorageService _localStorageService
+
+<MudText Typo="Typo.h2" Class="ml">Editar Préstamo</MudText>
+
+<MudGrid>
+    <MudItem xs="12" sm="7">
+        <MudPaper Class="pa-4">
+            <EditForm Model="prestamo" OnValidSubmit="OnValidSubmit">
+                <DataAnnotationsValidator />
+                <MudCard>
+                    <MudCardContent>
+                        <MudTextField Label="Estado del Préstamo" @bind-Value="prestamo.Status" For="@(() => prestamo.Status)" />
+
+                        <MudTextField Label="Fecha de Préstamo" @bind-Value="prestamo.FechaPrestamo" For="@(() => prestamo.FechaPrestamo)" InputType="InputType.Date" />
+                        <MudTextField Label="Fecha de Devolución" @bind-Value="prestamo.FechaDevolucion" For="@(() => prestamo.FechaDevolucion)" InputType="InputType.Date" />
+
+                        <!-- Selectores para Libro y Cliente -->
+                        <MudSelect T="int" Label="Libro" @bind-Value="prestamo.Libro_Id">
+                            @foreach (var libro in libros)
+                            {
+                                <MudSelectItem Value="@libro.Id">@libro.Titulo</MudSelectItem>
+                            }
+                        </MudSelect>
+
+                        <MudSelect T="int" Label="Cliente" @bind-Value="prestamo.ClienteId">
+                            @foreach (var cliente in clientes)
+                            {
+                                <MudSelectItem Value="@cliente.Id">@cliente.Nombre</MudSelectItem>
+                            }
+                        </MudSelect>
+
+                        <MudTextField Label="Encargado" @bind-Value="prestamo.Encargado" For="@(() => prestamo.Encargado)" />
+
+                        <MudDivider />
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton Href="@($"/prestamo/index")" Variant="Variant.Filled" Color="Color.Info" Class="text-center">Regresar</MudButton>
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Guardar cambios</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </EditForm>
+
+            @if (showLeaveAlert)
+            {
+                <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="(() => CloseMe(true))">
+                    Ocurrió un problema al guardar los cambios.
+                </MudAlert>
+            }
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+    private bool showLeaveAlert = false;
+    private Prestamo prestamo = new Prestamo();
+    private IEnumerable<Libro> libros = new List<Libro>();
+    private IEnumerable<Cliente> clientes = new List<Cliente>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", await _localStorageService.GetItemAsync<string>("token"));
+
+        // Obtener los detalles del préstamo
+        var respPrestamo = await httpClient.GetStringAsync($"prestamos/{id}");
+        prestamo = JsonSerializer.Deserialize<Prestamo>(respPrestamo, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+        // Cargar libros y clientes
+        await cargarLibros();
+        await cargarClientes();
+    }
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        await saveChanges();
+    }
+
+    private async Task saveChanges()
+    {
+        var httpResponse = await httpClient.PutAsJsonAsync($"prestamos/{prestamo.Id}", prestamo);
+
+        if (httpResponse.StatusCode != System.Net.HttpStatusCode.OK)
+        {
+            showLeaveAlert = true;
+        }
+        else
+        {
+            navigationManager.NavigateTo("/prestamo/index");
+        }
+    }
+
+    private void CloseMe(bool value)
+    {
+        showLeaveAlert = false;
+    }
+
+    private async Task cargarLibros()
+    {
+        var resp = await httpClient.GetStringAsync("libros/lista");
+        libros = JsonSerializer.Deserialize<IEnumerable<Libro>>(resp, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+    }
+
+    private async Task cargarClientes()
+    {
+        var resp = await httpClient.GetStringAsync("clientes/lista");
+        clientes = JsonSerializer.Deserialize<IEnumerable<Cliente>>(resp, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+    }
+}

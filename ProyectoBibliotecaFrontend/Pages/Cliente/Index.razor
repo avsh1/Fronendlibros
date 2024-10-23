@@ -29,7 +29,17 @@
         <MudTd DataLabel="Correo">@context.Correo</MudTd>
         <MudTd DataLabel="Teléfono">@context.Telefono</MudTd>
         <MudTd DataLabel="Fecha de Registro">@context.FechaRegistro.ToShortDateString()</MudTd>
-        <MudTd DataLabel="Estado">@context.Estado ? "Activo" : "Inactivo"</MudTd>
+
+
+        @if (context.Estado)
+        {
+            <MudTd DataLabel="Estado">Activo</MudTd>
+        }
+        else
+        {
+            <MudTd DataLabel="Estado">Inactivo</MudTd>
+        }
+
 
         <MudTd>
             <MudButton Href="@($"/cliente/editar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined"

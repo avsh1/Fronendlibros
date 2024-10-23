@@ -1,0 +1,80 @@
+﻿@page "/prestamo/index"
+@inject HttpClient httpClient
+@inject NavigationManager navigationManager
+@inject ILocalStorageService _localStorageService
+
+<MudText Typo="Typo.h2" Class="ml">Préstamos</MudText>
+
+<MudTable Items="@filteredPrestamos" Dense="true" Hover="true" Bordered="true" Striped="true">
+    <ToolBarContent>
+        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="goAdd" />
+        <MudSpacer />
+        <MudTextField @bind-Value="searchText" Placeholder="Buscar por título, cliente o encargado" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Id</MudTh>
+        <MudTh>Libro</MudTh>
+        <MudTh>Cliente</MudTh>
+        <MudTh>Status</MudTh>
+        <MudTh>Fecha de Préstamo</MudTh>
+        <MudTh>Fecha de Devolución</MudTh>
+        <MudTh>Encargado</MudTh>
+        <MudTh>Acciones</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="Libro">
+            @(context.Libro != null ? context.Libro.Titulo : "Sin libro")
+        </MudTd>
+        <MudTd DataLabel="Cliente">
+            @(context.Cliente != null ? context.Cliente.Nombre : "Sin cliente")
+        </MudTd>
+        <MudTd DataLabel="Status">@context.Status</MudTd>
+        <MudTd DataLabel="Fecha de Préstamo">@context.FechaPrestamo.ToShortDateString()</MudTd>
+        <MudTd DataLabel="Fecha de Devolución">
+            @(context.FechaDevolucion.HasValue ? context.FechaDevolucion.Value.ToShortDateString() : "Pendiente")
+        </MudTd>
+        <MudTd DataLabel="Encargado">@context.Encargado</MudTd>
+
+        <MudTd>
+            <MudButton Href="@($"/prestamo/editar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined"
+                       Color="Color.Tertiary" Class="text-center">Editar</MudButton>
+            <MudButton Href="@($"/prestamo/eliminar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined"
+                       Color="Color.Warning" Class="text-center">Eliminar</MudButton>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private IEnumerable<Prestamo> prestamos = new List<Prestamo>();
+    private IEnumerable<Prestamo> filteredPrestamos =>
+        string.IsNullOrWhiteSpace(searchText)
+            ? prestamos
+            : prestamos.Where(p => (p.Libro?.Titulo.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false)
+                                   || (p.Cliente?.Nombre.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false)
+                                   || p.Encargado.Contains(searchText, StringComparison.OrdinalIgnoreCase));
+
+    private string searchText = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", await _localStorageService.GetItemAsync<string>("token"));
+        await getAll();
+    }
+
+    private async Task getAll()
+    {
+        var httpResponse = await httpClient.GetStringAsync("prestamos/lista");
+        prestamos = JsonSerializer.Deserialize<IEnumerable<Prestamo>>(httpResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+    }
+
+    private void goAdd()
+    {
+        navigationManager.NavigateTo("prestamo/agregar");
+    }
+}

@@ -16,9 +16,11 @@
                         <MudTextField Label="Dirección" @bind-Value="cliente.Direccion" For="@(() => cliente.Direccion)" />
                         <MudTextField Label="Correo" @bind-Value="cliente.Correo" For="@(() => cliente.Correo)" />
                         <MudTextField Label="Teléfono" @bind-Value="cliente.Telefono" For="@(() => cliente.Telefono)" />
-                        <MudTextField Label="Fecha de Registro" @bind-Value="cliente.FechaRegistro" For="@(() => cliente.FechaRegistro)" InputType="InputType.Date" />
-
-
+                        <MudTextField Label="Fecha de Registro" @bind-Value="cliente.FechaRegistro" For="@(() => cliente.FechaRegistro)" />
+                        <MudSelect Variant="Variant.Outlined" Label="Estado" @bind-Value="cliente.Estado">
+                            <MudSelectItem Value="true">Activo</MudSelectItem>
+                            <MudSelectItem Value="false">Inactivo</MudSelectItem>
+                        </MudSelect>
 
                         <MudDivider />
                     </MudCardContent>
@@ -51,7 +53,7 @@
             new AuthenticationHeaderValue("Bearer", await _localStorageService.GetItemAsync<string>("token"));
 
         // Obtener los detalles del cliente
-        var respCliente = await httpClient.GetStringAsync($"clientes/{id}");
+        var respCliente = await httpClient.GetStringAsync($"cliente/{id}");
         cliente = JsonSerializer.Deserialize<Cliente>(respCliente, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
 
@@ -62,7 +64,7 @@
 
     private async Task saveChanges()
     {
-        var httpResponse = await httpClient.PutAsJsonAsync($"clientes/{cliente.Id}", cliente);
+        var httpResponse = await httpClient.PutAsJsonAsync($"cliente/{cliente.Id}", cliente);
 
         if (httpResponse.StatusCode != System.Net.HttpStatusCode.OK)
         {
