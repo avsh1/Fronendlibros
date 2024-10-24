@@ -9,24 +9,31 @@
 <MudGrid>
     <MudItem xs="12" sm="7">
         <MudPaper Class="pa-4">
-            <EditForm Model="libro" OnValidSubmit="OnValidSubmit">
-                <DataAnnotationsValidator />
-                <MudCard>
-                    <MudCardContent>
-                        <MudTextField Label="Título" @bind-Value="libro.Titulo" For="@(() => libro.Titulo)" />
-                        <MudTextField Label="Fecha de Publicación" @bind-Value="libro.Publicacion" For="@(() => libro.Publicacion)" InputType="InputType.Date" />
-                        <MudTextField Label="Autor" @bind-Value="libro.Autor.Nombre" For="@(() => libro.Autor.Nombre)" Disabled="true" />
-                        <MudTextField Label="Editorial" @bind-Value="libro.Editorial.Nombre" For="@(() => libro.Editorial.Nombre)" Disabled="true" />
-                        <MudTextField Label="Categoría" @bind-Value="libro.Categoria.Nombre" For="@(() => libro.Categoria.Nombre)" Disabled="true" />
-                        <MudDivider />
-                    </MudCardContent>
-                    <MudCardActions>
-                        <MudButton Href="@($"/libro/index")" Variant="Variant.Filled" Color="Color.Info"
-                                   Class="text-center">Regresar</MudButton>
-                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Error" Class="ml-auto">Eliminar</MudButton>
-                    </MudCardActions>
-                </MudCard>
-            </EditForm>
+            @if (libro != null)
+            {
+                <EditForm Model="libro" OnValidSubmit="OnValidSubmit">
+                    <DataAnnotationsValidator />
+                    <MudCard>
+                        <MudCardContent>
+                            <MudTextField Label="Título" @bind-Value="libro.Titulo" For="@(() => libro.Titulo)" />
+                            <MudTextField Label="Fecha de Publicación" @bind-Value="libro.Publicacion" For="@(() => libro.Publicacion)" InputType="InputType.Date" />
+                            <MudTextField Label="Autor" @bind-Value="libro.Autor.Nombre" For="@(() => libro.Autor.Nombre)" Disabled="true" />
+                            <MudTextField Label="Editorial" @bind-Value="libro.Editorial.Nombre" For="@(() => libro.Editorial.Nombre)" Disabled="true" />
+                            <MudTextField Label="Categoría" @bind-Value="libro.Categoria.Nombre" For="@(() => libro.Categoria.Nombre)" Disabled="true" />
+                            <MudDivider />
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudButton Href="@($"/libro/index")" Variant="Variant.Filled" Color="Color.Info" Class="text-center">Regresar</MudButton>
+                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Error" Class="ml-auto">Eliminar</MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </EditForm>
+            }
+            else
+            {
+                <MudText Typo="Typo.h5" Color="Color.Error">No se pudo cargar el libro.</MudText>
+            }
+
             @if (showLeaveAlert)
             {
                 <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="(() => CloseMe(true))">Ocurrió un problema.</MudAlert>
@@ -39,15 +46,28 @@
     [Parameter]
     public int id { get; set; }
     private bool showLeaveAlert = false;
-    Libro libro = new Libro();
+    private Libro libro = null;  // Inicializa como null para verificar si la carga es exitosa
 
     protected override async Task OnInitializedAsync()
     {
-        httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", await _localStorageService.GetItemAsync<string>("token"));
+        try
+        {
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", await _localStorageService.GetItemAsync<string>("token"));
 
-        var resp = await httpClient.GetStringAsync("libros/" + id);
-        libro = JsonSerializer.Deserialize<Libro>(resp, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var resp = await httpClient.GetStringAsync($"libros/{id}");
+            libro = JsonSerializer.Deserialize<Libro>(resp, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+        catch (HttpRequestException ex)
+        {
+            showLeaveAlert = true;
+            Console.WriteLine("Error al cargar el libro: " + ex.Message);
+        }
+        catch (Exception ex)
+        {
+            showLeaveAlert = true;
+            Console.WriteLine("Error inesperado: " + ex.Message);
+        }
     }
 
     private async Task OnValidSubmit(EditContext context)
@@ -57,15 +77,24 @@
 
     private async Task eliminar()
     {
-        var httpResponse = await httpClient.DeleteAsync("libros/" + libro.Id);
+        try
+        {
+            var httpResponse = await httpClient.DeleteAsync($"libros/{libro.Id}");
 
-        if (!(httpResponse.StatusCode == System.Net.HttpStatusCode.OK))
+            if (httpResponse.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                navigationManager.NavigateTo("libro/index");
+            }
+            else
+            {
+                showLeaveAlert = true;
+                Console.WriteLine("Error al eliminar el libro: " + httpResponse.StatusCode);
+            }
+        }
+        catch (Exception ex)
         {
             showLeaveAlert = true;
-        }
-        else
-        {
-            navigationManager.NavigateTo("libro/index");
+            Console.WriteLine("Error al eliminar el libro: " + ex.Message);
         }
     }
 

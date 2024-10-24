@@ -12,12 +12,8 @@
                 <DataAnnotationsValidator />
                 <MudCard>
                     <MudCardContent>
-                        <MudTextField Label="Estado del Préstamo" @bind-Value="prestamo.Status" For="@(() => prestamo.Status)" />
 
-                        <MudTextField Label="Fecha de Préstamo" @bind-Value="prestamo.FechaPrestamo" For="@(() => prestamo.FechaPrestamo)" InputType="InputType.Date" />
-                        <MudTextField Label="Fecha de Devolución" @bind-Value="prestamo.FechaDevolucion" For="@(() => prestamo.FechaDevolucion)" InputType="InputType.Date" />
-
-                        <!-- Selectores para Libro y Cliente -->
+                       
                         <MudSelect T="int" Label="Libro" @bind-Value="prestamo.Libro_Id">
                             @foreach (var libro in libros)
                             {
@@ -32,6 +28,9 @@
                             }
                         </MudSelect>
 
+                        <MudTextField Label="Estado del Préstamo" @bind-Value="prestamo.Status" For="@(() => prestamo.Status)" />
+                        <MudTextField Label="Fecha de Préstamo" @bind-Value="prestamo.FechaPrestamo" For="@(() => prestamo.FechaPrestamo)" />
+                        <MudTextField Label="Fecha de Devolución" @bind-Value="prestamo.FechaDevolucion" For="@(() => prestamo.FechaDevolucion)" />
                         <MudTextField Label="Encargado" @bind-Value="prestamo.Encargado" For="@(() => prestamo.Encargado)" />
 
                         <MudDivider />
@@ -66,13 +65,21 @@
         httpClient.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", await _localStorageService.GetItemAsync<string>("token"));
 
-        // Obtener los detalles del préstamo
-        var respPrestamo = await httpClient.GetStringAsync($"prestamos/{id}");
-        prestamo = JsonSerializer.Deserialize<Prestamo>(respPrestamo, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        try
+        {
+            // Obtener los detalles del préstamo
+            var respPrestamo = await httpClient.GetStringAsync($"prestamos/{id}");
+            prestamo = JsonSerializer.Deserialize<Prestamo>(respPrestamo, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-        // Cargar libros y clientes
-        await cargarLibros();
-        await cargarClientes();
+            // Cargar libros y clientes
+            await cargarLibros();
+            await cargarClientes();
+        }
+        catch (Exception ex)
+        {
+            showLeaveAlert = true;
+            Console.WriteLine($"Error: {ex.Message}");
+        }
     }
 
     private async Task OnValidSubmit(EditContext context)
@@ -82,15 +89,23 @@
 
     private async Task saveChanges()
     {
-        var httpResponse = await httpClient.PutAsJsonAsync($"prestamos/{prestamo.Id}", prestamo);
+        try
+        {
+            var httpResponse = await httpClient.PutAsJsonAsync($"prestamos/{prestamo.Id}", prestamo);
 
-        if (httpResponse.StatusCode != System.Net.HttpStatusCode.OK)
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                navigationManager.NavigateTo("/prestamo/index");
+            }
+            else
+            {
+                showLeaveAlert = true;
+            }
+        }
+        catch (Exception ex)
         {
             showLeaveAlert = true;
-        }
-        else
-        {
-            navigationManager.NavigateTo("/prestamo/index");
+            Console.WriteLine($"Error al guardar cambios: {ex.Message}");
         }
     }
 
@@ -101,13 +116,29 @@
 
     private async Task cargarLibros()
     {
-        var resp = await httpClient.GetStringAsync("libros/lista");
-        libros = JsonSerializer.Deserialize<IEnumerable<Libro>>(resp, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        try
+        {
+            var resp = await httpClient.GetStringAsync("libros/lista");
+            libros = JsonSerializer.Deserialize<IEnumerable<Libro>>(resp, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+        catch (Exception ex)
+        {
+            showLeaveAlert = true;
+            Console.WriteLine($"Error al cargar libros: {ex.Message}");
+        }
     }
 
     private async Task cargarClientes()
     {
-        var resp = await httpClient.GetStringAsync("clientes/lista");
-        clientes = JsonSerializer.Deserialize<IEnumerable<Cliente>>(resp, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        try
+        {
+            var resp = await httpClient.GetStringAsync("cliente/lista");
+            clientes = JsonSerializer.Deserialize<IEnumerable<Cliente>>(resp, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+        catch (Exception ex)
+        {
+            showLeaveAlert = true;
+            Console.WriteLine($"Error al cargar clientes: {ex.Message}");
+        }
     }
 }
