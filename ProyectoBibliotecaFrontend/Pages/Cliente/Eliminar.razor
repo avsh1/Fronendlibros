@@ -11,7 +11,7 @@
         <MudPaper Class="pa-4">
             <EditForm Model="cliente" OnValidSubmit="OnValidSubmit">
                 <DataAnnotationsValidator />
-                <MudCard>
+                <MudCard Style="background-color: #CFD8DC;">
                     <MudCardContent>
                         <MudTextField Label="Nombre" @bind-Value="cliente.Nombre" For="@(() => cliente.Nombre)" Disabled="true" />
                         <MudTextField Label="Dirección" @bind-Value="cliente.Direccion" For="@(() => cliente.Direccion)" Disabled="true" />
@@ -25,8 +25,8 @@
                         <MudDivider />
                     </MudCardContent>
                     <MudCardActions>
-                        <MudButton Href="@($"/cliente/index")" Variant="Variant.Filled" Color="Color.Info" Class="text-center">Regresar</MudButton>
-                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Error" Class="ml-auto">Eliminar</MudButton>
+                        <MudButton Href="@($"/cliente/index")" Variant="Variant.Outlined" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" Class="text-center">Regresar</MudButton>
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Class="ml-auto">Eliminar</MudButton>
                     </MudCardActions>
                 </MudCard>
             </EditForm>

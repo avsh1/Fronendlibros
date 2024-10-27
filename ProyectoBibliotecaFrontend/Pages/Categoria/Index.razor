@@ -7,24 +7,24 @@
 
 <MudTable Items="@categorias" Dense="true" Hover="true" Bordered="true" Striped="true">
     <ToolBarContent>
-        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="goAdd" />
+        <MudFab StartIcon="@Icons.Material.Filled.Add" Style="background-color: #2979FF; color: white;" OnClick="goAdd" />
         <MudSpacer />
         <MudTextField @bind-Value="searchText" Placeholder="Buscar por nombre" 
         Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>Id</MudTh>
-        <MudTh>Nombre</MudTh>
-        <MudTh>Acciones</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Id</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Nombre</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Acciones</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Id">@context.Id</MudTd>
-        <MudTd DataLabel="Nombre">@context.Nombre</MudTd>
-        <MudTd>
-            <MudButton Href="@($"/categoria/editar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined"
+        <MudTd DataLabel="Id" Style="background-color: #FFF8E1;">@context.Id</MudTd>
+        <MudTd DataLabel="Nombre" Style="background-color: #FFECB3;">@context.Nombre</MudTd>
+        <MudTd Style="background-color: #FFF8E1;">
+            <MudButton Href="@($"/categoria/editar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Edit"
                        Color="Color.Tertiary" Class="text-center">Editar</MudButton>
-            <MudButton Href="@($"/categoria/eliminar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined"
-                       Color="Color.Warning" Class="text-center">Eliminar</MudButton>
+            <MudButton Href="@($"/categoria/eliminar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Delete"
+                       Color="Color.Error" Class="text-center">Eliminar</MudButton>
         </MudTd>
     </RowTemplate>
     <PagerContent>

@@ -10,15 +10,15 @@
         <MudPaper Class="pa-4">
             <EditForm Model="categoria" OnValidSubmit="OnValidSubmit">
                 <DataAnnotationsValidator />
-                <MudCard>
+                <MudCard Style="background-color: #CFD8DC;">
                     <MudCardContent>
                         <MudTextField Label="Nombre" @bind-Value="categoria.Nombre" For="@(() => categoria.Nombre)" />
                         <MudDivider />
                     </MudCardContent>
                     <MudCardActions>
-                        <MudButton Href="@($"/categoria/index")" Variant="Variant.Filled" Color="Color.Info"
+                        <MudButton Href="@($"/categoria/index")" Variant="Variant.Outlined" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary"
                                    Class="text-center">Regresar</MudButton>
-                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Guardar cambios</MudButton>
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Class="ml-auto">Guardar cambios</MudButton>
                     </MudCardActions>
                 </MudCard>
             </EditForm>

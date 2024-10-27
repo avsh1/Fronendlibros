@@ -11,7 +11,7 @@
         <MudPaper Class="pa-4">
             <EditForm Model="prestamo" OnValidSubmit="OnValidSubmit">
                 <DataAnnotationsValidator />
-                <MudCard>
+                <MudCard Style="background-color: #CFD8DC;">
                     <MudCardContent>
                         <MudTextField Label="Libro" @bind-Value="prestamo.Libro.Titulo" For="@(() => prestamo.Libro.Titulo)" Disabled="true" />
                         <MudTextField Label="Cliente" @bind-Value="prestamo.Cliente.Nombre" For="@(() => prestamo.Cliente.Nombre)" Disabled="true" />
@@ -22,8 +22,8 @@
                         <MudDivider />
                     </MudCardContent>
                     <MudCardActions>
-                        <MudButton Href="@($"/prestamo/index")" Variant="Variant.Filled" Color="Color.Info" Class="text-center">Regresar</MudButton>
-                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Error" Class="ml-auto">Eliminar</MudButton>
+                        <MudButton Href="@($"/prestamo/index")" Variant="Variant.Outlined" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" Class="text-center">Regresar</MudButton>
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Class="ml-auto">Eliminar</MudButton>
                     </MudCardActions>
                 </MudCard>
             </EditForm>

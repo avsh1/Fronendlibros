@@ -7,39 +7,39 @@
 
 <MudTable Items="@filteredLibros" Dense="true" Hover="true" Bordered="true" Striped="true">
     <ToolBarContent>
-        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="goAdd" />
+        <MudFab StartIcon="@Icons.Material.Filled.Add" Style="background-color: #2979FF; color: white;" OnClick="goAdd" />
         <MudSpacer />
         <MudTextField @bind-Value="searchText" Placeholder="Buscar por título o autor" Adornment="Adornment.Start"
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>Id</MudTh>
-        <MudTh>Título</MudTh>
-        <MudTh>Autor</MudTh>
-        <MudTh>Editorial</MudTh>
-        <MudTh>Categoría</MudTh>
-        <MudTh>Fecha de Publicación</MudTh>
-        <MudTh>Acciones</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Id</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Título</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Autor</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Editorial</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Categoría</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Fecha de Publicación</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Acciones</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Id">@context.Id</MudTd>
-        <MudTd DataLabel="Título">@context.Titulo</MudTd>
-        <MudTd DataLabel="Autor">
+        <MudTd DataLabel="Id" Style="background-color: #FFF8E1;">@context.Id</MudTd>
+        <MudTd DataLabel="Título" Style="background-color: #FFECB3;">@context.Titulo</MudTd>
+        <MudTd DataLabel="Autor" Style="background-color: #FFF8E1;">
             @(context.Autor != null ? context.Autor.Nombre : "Sin autor")
         </MudTd>
-        <MudTd DataLabel="Editorial">
+        <MudTd DataLabel="Editorial" Style="background-color: #FFECB3;">
             @(context.Editorial != null ? context.Editorial.Nombre : "Sin editorial")
         </MudTd>
-        <MudTd DataLabel="Categoría">
+        <MudTd DataLabel="Categoría" Style="background-color: #FFF8E1;">
             @(context.Categoria != null ? context.Categoria.Nombre : "Sin categoría")
         </MudTd>
-        <MudTd DataLabel="Fecha de Publicación">@context.Publicacion.ToShortDateString()</MudTd>
+        <MudTd DataLabel="Fecha de Publicación" Style="background-color: #FFECB3;">@context.Publicacion.ToShortDateString()</MudTd>
 
-        <MudTd>
-            <MudButton Href="@($"/libro/editar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined"
+        <MudTd Style="background-color: #FFF8E1;">
+            <MudButton Href="@($"/libro/editar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Edit"
                        Color="Color.Tertiary" Class="text-center">Editar</MudButton>
-            <MudButton Href="@($"/libro/eliminar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined"
-                       Color="Color.Warning" Class="text-center">Eliminar</MudButton>
+            <MudButton Href="@($"/libro/eliminar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Delete"
+                       Color="Color.Error" Class="text-center">Eliminar</MudButton>
         </MudTd>
     </RowTemplate>
     <PagerContent>

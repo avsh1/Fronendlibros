@@ -10,16 +10,16 @@
         <MudPaper Class="pa-4">
             <EditForm Model="autor" OnValidSubmit="OnValidSubmit">
                 <DataAnnotationsValidator />
-                <MudCard>
+                <MudCard Style="background-color: #CFD8DC;">
                     <MudCardContent>
                         <MudTextField Label="Nombre" @bind-Value="autor.Nombre" For="@(() => autor.Nombre)" />
                         <MudTextField Label="Nacionalidad" @bind-Value="autor.Nacionalidad" For="@(() => autor.Nacionalidad)" />
                         <MudDivider />
                     </MudCardContent>
                     <MudCardActions>
-                        <MudButton Href="@($"/autor/index")" Variant="Variant.Filled" Color="Color.Info"
+                        <MudButton Href="@($"/autor/index")" Variant="Variant.Outlined" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary"
                                    Class="text-center">Regresar</MudButton>
-                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Guardar cambios</MudButton>
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Class="ml-auto">Guardar cambios</MudButton>
                     </MudCardActions>
                 </MudCard>
             </EditForm>

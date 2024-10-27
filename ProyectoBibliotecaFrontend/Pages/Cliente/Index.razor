@@ -7,45 +7,45 @@
 
 <MudTable Items="@filteredClientes" Dense="true" Hover="true" Bordered="true" Striped="true">
     <ToolBarContent>
-        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="goAdd" />
+        <MudFab StartIcon="@Icons.Material.Filled.Add" Style="background-color: #2979FF; color: white;" OnClick="goAdd" />
         <MudSpacer />
         <MudTextField @bind-Value="searchText" Placeholder="Buscar por nombre o correo" Adornment="Adornment.Start"
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>Id</MudTh>
-        <MudTh>Nombre</MudTh>
-        <MudTh>Dirección</MudTh>
-        <MudTh>Correo</MudTh>
-        <MudTh>Teléfono</MudTh>
-        <MudTh>Fecha de Registro</MudTh>
-        <MudTh>Estado</MudTh>
-        <MudTh>Acciones</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Id</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Nombre</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Dirección</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Correo</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Teléfono</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Fecha de Registro</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Estado</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Acciones</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Id">@context.Id</MudTd>
-        <MudTd DataLabel="Nombre">@context.Nombre</MudTd>
-        <MudTd DataLabel="Dirección">@context.Direccion</MudTd>
-        <MudTd DataLabel="Correo">@context.Correo</MudTd>
-        <MudTd DataLabel="Teléfono">@context.Telefono</MudTd>
-        <MudTd DataLabel="Fecha de Registro">@context.FechaRegistro.ToShortDateString()</MudTd>
+        <MudTd DataLabel="Id" Style="background-color: #FFF8E1;">@context.Id</MudTd>
+        <MudTd DataLabel="Nombre" Style="background-color: #FFECB3;">@context.Nombre</MudTd>
+        <MudTd DataLabel="Dirección" Style="background-color: #FFF8E1;">@context.Direccion</MudTd>
+        <MudTd DataLabel="Correo" Style="background-color: #FFECB3;">@context.Correo</MudTd>
+        <MudTd DataLabel="Teléfono" Style="background-color: #FFF8E1;">@context.Telefono</MudTd>
+        <MudTd DataLabel="Fecha de Registro" Style="background-color: #FFECB3;">@context.FechaRegistro.ToShortDateString()</MudTd>
 
 
         @if (context.Estado)
         {
-            <MudTd DataLabel="Estado">Activo</MudTd>
+            <MudTd DataLabel="Estado" Style="background-color: #FFF8E1;">Activo</MudTd>
         }
         else
         {
-            <MudTd DataLabel="Estado">Inactivo</MudTd>
+            <MudTd DataLabel="Estado" Style="background-color: #FFECB3;">Inactivo</MudTd>
         }
 
 
-        <MudTd>
-            <MudButton Href="@($"/cliente/editar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined"
+        <MudTd Style="background-color: #FFECB3;">
+            <MudButton Href="@($"/cliente/editar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Edit"
                        Color="Color.Tertiary" Class="text-center">Editar</MudButton>
-            <MudButton Href="@($"/cliente/eliminar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined"
-                       Color="Color.Warning" Class="text-center">Eliminar</MudButton>
+            <MudButton Href="@($"/cliente/eliminar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Delete"
+                       Color="Color.Error" Class="text-center">Eliminar</MudButton>
         </MudTd>
     </RowTemplate>
     <PagerContent>

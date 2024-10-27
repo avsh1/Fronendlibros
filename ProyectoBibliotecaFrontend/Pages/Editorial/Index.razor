@@ -7,30 +7,30 @@
 
 <MudTable Items="@editoriales" Dense="true" Hover="true" Bordered="true" Striped="true">
     <ToolBarContent>
-        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="goAdd" />
+        <MudFab StartIcon="@Icons.Material.Filled.Add" Style="background-color: #2979FF; color: white;" OnClick="goAdd" />
         <MudSpacer />
         <MudTextField @bind-Value="searchText" Placeholder="Buscar por nombre"
         Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>Id</MudTh>
-        <MudTh>Nombre</MudTh>
-        <MudTh>Pais</MudTh>
-        <MudTh>Email</MudTh>
-        <MudTh>Telefono</MudTh>
-        <MudTh>Acciones</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Id</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Nombre</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Pais</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Email</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Telefono</MudTh>
+        <MudTh Style="background-color: #FFC107; color: white;">Acciones</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Id">@context.Id</MudTd>
-        <MudTd DataLabel="Nombre">@context.Nombre</MudTd>
-        <MudTd DataLabel="Pais">@context.Pais</MudTd>
-        <MudTd DataLabel="Email">@context.Email</MudTd>
-        <MudTd DataLabel="Telefono">@context.Telefono</MudTd>
-        <MudTd>
-            <MudButton Href="@($"/editorial/editar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined"
+        <MudTd DataLabel="Id" Style="background-color: #FFF8E1;">@context.Id</MudTd>
+        <MudTd DataLabel="Nombre" Style="background-color: #FFECB3;">@context.Nombre</MudTd>
+        <MudTd DataLabel="Pais" Style="background-color: #FFF8E1;">@context.Pais</MudTd>
+        <MudTd DataLabel="Email" Style="background-color: #FFECB3;">@context.Email</MudTd>
+        <MudTd DataLabel="Telefono" Style="background-color: #FFF8E1;">@context.Telefono</MudTd>
+        <MudTd Style="background-color: #FFECB3;">
+            <MudButton Href="@($"/editorial/editar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Edit"
                        Color="Color.Tertiary" Class="text-center">Editar</MudButton>
-            <MudButton Href="@($"/editorial/eliminar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined"
-                       Color="Color.Warning" Class="text-center">Eliminar</MudButton>
+            <MudButton Href="@($"/editorial/eliminar/{context.Id}")" Size="Size.Small" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Delete"
+                       Color="Color.Error" Class="text-center">Eliminar</MudButton>
         </MudTd>
     </RowTemplate>
     <PagerContent>

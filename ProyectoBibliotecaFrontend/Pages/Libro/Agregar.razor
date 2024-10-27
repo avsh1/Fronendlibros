@@ -10,7 +10,7 @@
         <MudPaper Class="pa-4">
             <EditForm Model="libro" OnValidSubmit="OnValidSubmit">
                 <DataAnnotationsValidator />
-                <MudCard>
+                <MudCard Style="background-color: #CFD8DC;">
                     <MudCardContent>
                         <MudTextField Label="Título" @bind-Value="libro.Titulo" For="@(() => libro.Titulo)" />
                         <MudTextField Label="Fecha de Publicación" @bind-Value="libro.Publicacion" For="@(() => libro.Publicacion)" />
@@ -45,8 +45,8 @@
                     </MudCardContent>
 
                     <MudCardActions>
-                        <MudButton Href="@($"/libro/index")" Variant="Variant.Filled" Color="Color.Info" Class="text-center">Regresar</MudButton>
-                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Guardar</MudButton>
+                        <MudButton Href="@($"/libro/index")" Variant="Variant.Outlined" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" Class="text-center">Regresar</MudButton>
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Class="ml-auto">Guardar</MudButton>
                     </MudCardActions>
                 </MudCard>
             </EditForm>
