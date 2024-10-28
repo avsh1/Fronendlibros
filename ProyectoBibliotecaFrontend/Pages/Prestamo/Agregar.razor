@@ -30,7 +30,7 @@
                         </MudSelect>
                         <MudDivider />
 
-                        <MudTextField Label="Status" @bind-Value="prestamo.Status" For="@(() => prestamo.Status)" />
+                        @* <MudTextField Label="Status" @bind-Value="prestamo.Status" For="@(() => prestamo.Status)" />  *@
                         <MudTextField Label="Fecha de Préstamo" @bind-Value="prestamo.FechaPrestamo" For="@(() => prestamo.FechaPrestamo)" />
                         <MudTextField Label="Fecha de Devolución" @bind-Value="prestamo.FechaDevolucion" For="@(() => prestamo.FechaDevolucion)" />
                         <MudTextField Label="Encargado" @bind-Value="prestamo.Encargado" For="@(() => prestamo.Encargado)" />
@@ -53,6 +53,7 @@
 @code {
     private IEnumerable<Libro> libros = new List<Libro>();
     private IEnumerable<Cliente> clientes = new List<Cliente>();
+    // private DateTime fecha = DateTime.Now;
 
     private bool showLeaveAlert = false;
     private Prestamo prestamo = new Prestamo();
@@ -82,6 +83,8 @@
     {
         prestamo.Libro_Id = libroSeleccionado;
         prestamo.ClienteId = clienteSeleccionado;
+        // prestamo.FechaPrestamo = fecha;
+        prestamo.Status = "PRESTADO";
 
         var httpResponse = await httpClient.PostAsJsonAsync<Prestamo>("prestamos", prestamo);
 
