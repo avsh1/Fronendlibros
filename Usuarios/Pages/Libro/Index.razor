@@ -1,0 +1,54 @@
+﻿@page "/libro/index"
+@inject HttpClient httpClient
+@inject NavigationManager navigationManager
+@inject ILocalStorageService _localStorageService
+
+<MudText Typo="Typo.h2" Class="ml">Libros</MudText>
+
+<MudGrid>
+    @foreach (var libro in filteredLibros)
+    {
+        <MudItem xs="12" sm="6" md="4" lg="3">
+            <MudCard Style="padding: 16px;">
+                <MudCardMedia Image="@libro.ImagenUrl" Height="180" Alt="@libro.Titulo" Style="object-fit: cover; cursor: pointer;"
+                              OnClick="() => goToDetails(libro.Id)" />
+                <MudCardContent>
+                    <MudText Typo="Typo.subtitle1" Style="cursor: pointer;" OnClick="() => goToDetails(libro.Id)">
+                        @libro.ImagenUrl
+                    </MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    }
+</MudGrid>
+
+<MudTextField @bind-Value="searchText" Placeholder="Buscar por título" Adornment="Adornment.Start"
+              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-3 mb-3" />
+
+@code {
+    private IEnumerable<Libro> libros = new List<Libro>();
+    private IEnumerable<Libro> filteredLibros =>
+        string.IsNullOrWhiteSpace(searchText)
+            ? libros
+            : libros.Where(l => l.Titulo.Contains(searchText, StringComparison.OrdinalIgnoreCase));
+
+    private string searchText = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", await _localStorageService.GetItemAsync<string>("token"));
+        await getAll();
+    }
+
+    private async Task getAll()
+    {
+        var httpResponse = await httpClient.GetStringAsync("libros/lista");
+        libros = JsonSerializer.Deserialize<IEnumerable<Libro>>(httpResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+    }
+
+    private void goToDetails(int libroId)
+    {
+        navigationManager.NavigateTo($"/libro/detalle/{libroId}");
+    }
+}

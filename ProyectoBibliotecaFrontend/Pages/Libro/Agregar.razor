@@ -14,9 +14,20 @@
                     <MudCardContent>
                         <MudTextField Label="Título" @bind-Value="libro.Titulo" For="@(() => libro.Titulo)" />
                         <MudTextField Label="Fecha de Publicación" @bind-Value="libro.Publicacion" For="@(() => libro.Publicacion)" />
+
+                        <!-- Campo para ingresar la URL de la imagen -->
+                        <MudTextField Label="URL de la Imagen" @bind-Value="libro.ImagenUrl" For="@(() => libro.ImagenUrl)" />
+                            
+                        <!-- Mostrar la imagen si la URL es válida -->
+                        @if (!string.IsNullOrEmpty(libro.ImagenUrl))
+                        {
+                            <img src="~/imagenes/@libro.ImagenUrl" alt="Imagen del libro" style="max-width: 250px;" />
+                        }
+
                     </MudCardContent>
                     <MudDivider />
                     <MudCardContent>
+                        <!-- Select de Autor, Editorial y Categoría (sin cambios) -->
                         <MudSelect Variant="Variant.Outlined" Label="Autor" AnchorOrigin="Origin.BottomCenter"
                                    @bind-Value="autorSeleccionado">
                             @foreach (var item in autores)

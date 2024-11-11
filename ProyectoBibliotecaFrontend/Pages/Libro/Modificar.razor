@@ -15,6 +15,13 @@
                         <MudTextField Label="Título" @bind-Value="libro.Titulo" For="@(() => libro.Titulo)" />
                         <MudTextField Label="Fecha de Publicación" @bind-Value="libro.Publicacion" For="@(() => libro.Publicacion)" />
 
+                        <!-- Campo para URL de la imagen y vista previa -->
+                        <MudTextField Label="URL de la imagen" @bind-Value="libro.ImagenUrl" For="@(() => libro.ImagenUrl)" />
+                        @if (!string.IsNullOrEmpty(libro.ImagenUrl))
+                        {
+                            <img src="@libro.ImagenUrl" alt="Imagen del libro" style="max-width: 250px;" />
+                        }
+
                         <!-- Selectores para Autor, Editorial y Categoría -->
                         <MudSelect T="int" Label="Autor" @bind-Value="libro.Autor_Id">
                             @foreach (var autor in autores)
@@ -41,7 +48,7 @@
                     </MudCardContent>
                     <MudCardActions>
                         <MudButton Href="@($"/libro/index")" Variant="Variant.Outlined" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" Class="text-center">Regresar</MudButton>
-                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Class="ml-auto">Guardar camb</MudButton>
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Class="ml-auto">Guardar cambios</MudButton>
                     </MudCardActions>
                 </MudCard>
             </EditForm>
