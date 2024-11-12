@@ -102,3 +102,26 @@ code {
     color: #c02d76;
 }
 
+@* Añadir este bloque de estilos CSS *@ <style>
+/* Clase para el estilo moderno */
+.modern-text {
+    font-size: 1.4rem; /* Tamaño moderno, ajustable en móviles */
+    font-weight: 500; /* Peso de la fuente para un look moderno */
+    letter-spacing: 0.05em; /* Espaciado para mejor legibilidad */
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Ajuste para pantallas más grandes */
+@media (min-width: 768px) {
+    .modern-text {
+        font-size: 1.75rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .modern-text {
+        font-size: 2rem;
+    }
+}
+
+</style >

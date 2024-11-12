@@ -12,11 +12,11 @@
                 <DataAnnotationsValidator />
                 <MudCard Style="background-color: #CFD8DC;">
                     <MudCardContent>
+                        <MudDatePicker Label="Fecha de Registro" @bind-Value="fechaRegistro" />
                         <MudTextField Label="Nombre" @bind-Value="cliente.Nombre" For="@(() => cliente.Nombre)" />
                         <MudTextField Label="Dirección" @bind-Value="cliente.Direccion" For="@(() => cliente.Direccion)" />
                         <MudTextField Label="Correo" @bind-Value="cliente.Correo" For="@(() => cliente.Correo)" />
                         <MudTextField Label="Teléfono" @bind-Value="cliente.Telefono" For="@(() => cliente.Telefono)" />
-                        <MudTextField Label="Fecha de Registro" @bind-Value="cliente.FechaRegistro" For="@(() => cliente.FechaRegistro)" />
                         <MudSelect Variant="Variant.Outlined" Label="Estado" @bind-Value="cliente.Estado">
                             <MudSelectItem Value="true">Activo</MudSelectItem>
                             <MudSelectItem Value="false">Inactivo</MudSelectItem>
@@ -46,6 +46,8 @@
     public int id { get; set; }
     private bool showLeaveAlert = false;
     private Cliente cliente = new Cliente();
+    private DateTime fechaRegistro = DateTime.Today;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -55,6 +57,8 @@
         // Obtener los detalles del cliente
         var respCliente = await httpClient.GetStringAsync($"cliente/{id}");
         cliente = JsonSerializer.Deserialize<Cliente>(respCliente, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        fechaRegistro = Convert.ToDateTime(cliente.FechaRegistro);
+
     }
 
     private async Task OnValidSubmit(EditContext context)
@@ -64,6 +68,7 @@
 
     private async Task saveChanges()
     {
+        cliente.FechaRegistro = fechaRegistro;
         var httpResponse = await httpClient.PutAsJsonAsync($"cliente/{cliente.Id}", cliente);
 
         if (httpResponse.StatusCode != System.Net.HttpStatusCode.OK)

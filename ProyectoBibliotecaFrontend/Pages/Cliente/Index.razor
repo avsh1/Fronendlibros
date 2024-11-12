@@ -28,7 +28,7 @@
         <MudTd DataLabel="Dirección" Style="background-color: #FFF8E1;">@context.Direccion</MudTd>
         <MudTd DataLabel="Correo" Style="background-color: #FFECB3;">@context.Correo</MudTd>
         <MudTd DataLabel="Teléfono" Style="background-color: #FFF8E1;">@context.Telefono</MudTd>
-        <MudTd DataLabel="Fecha de Registro" Style="background-color: #FFECB3;">@context.FechaRegistro.ToShortDateString()</MudTd>
+        <MudTd DataLabel="Fecha de Registro" Style="background-color: #FFECB3;">@context.FechaRegistro.</MudTd>
 
 
         @if (context.Estado)
@@ -72,7 +72,7 @@
 
     private async Task getAll()
     {
-        var httpResponse = await httpClient.GetStringAsync("cliente/lista");
+        var httpResponse = await httpClient.GetStringAsync("clientes/lista");
         clientes = JsonSerializer.Deserialize<IEnumerable<Cliente>>(httpResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
 

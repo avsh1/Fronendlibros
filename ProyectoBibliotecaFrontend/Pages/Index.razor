@@ -5,32 +5,59 @@
 @inject ILocalStorageService _localStorageService
 @inject HttpClient Http
 
-<MudImage ObjectFit="ObjectFit.Contain" Src="/images/fullcolor.png" Width="200" Height="150" Alt="Swedish Farm House" Elevation="0" Class="rounded-lg ma-4" />
-<MudPaper Class="pa-2 ma-4" Elevation="0">
-    <EditForm Model="@user" OnValidSubmit="OnValidSubmit">
-        <DataAnnotationsValidator />
-        <MudGrid>
-            <MudItem xs="12">
-                <MudTextField Label="Usuario" Class="mt-3"
-                              @bind-Value="user.Login" For="@(() => user.Login)" />
-            </MudItem>
-            <MudItem xs="12">
-                <MudTextField Label="Clave" Class="mt-3"
-                              @bind-Value="user.Clave" For="@(() => user.Clave)" InputType="InputType.Password" />
-            </MudItem>
-            <MudItem xs="12">
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
-            </MudItem>
-        </MudGrid>
-    </EditForm>
-    @if (showLeaveAlert)
-    {
-        <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="(() => CloseMe(true))">No se reconocen las credenciales ingresadas.</MudAlert>
-    }
-</MudPaper>
+<MudContainer MaxWidth="MaxWidth.Small" Class="d-flex justify-center align-center min-height-100vh"
+              Style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #f5f7fa, #c3cfe2);">
+    <MudPaper Elevation="4" Class="rounded-lg pa-6" Style="width: 100%; max-width: 400px; background-color: #ffffff;">
+        <!-- Logo o imagen superior -->
+        <MudImage ObjectFit="ObjectFit.Contain" Src="/imagenes/logo.jpg" Width="200" Height="150" Alt="Swedish Farm House" Class="mx-auto my-3" />
+
+        <!-- Encabezado de bienvenida -->
+        <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-4 modern-text" Style="color: #4a4a4a; font-family: 'Montserrat', sans-serif;">
+            Bienvenido a Biblioteca_vr AS
+        </MudText>
+
+        <!-- Formulario de inicio de sesión -->
+        <EditForm Model="@user" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator />
+
+            <MudGrid Spacing="2">
+                <MudItem xs="12">
+                    <MudTextField Label="Usuario" Variant="Variant.Outlined" Class="w-100"
+                                  @bind-Value="user.Login" For="@(() => user.Login)"
+                                  Style="background-color: #f0f0f0; color: #333;" />
+                </MudItem>
+
+                <MudItem xs="12">
+                    <MudTextField Label="Clave" Variant="Variant.Outlined" Class="w-100"
+                                  @bind-Value="user.Clave" For="@(() => user.Clave)" InputType="InputType.Password"
+                                  Style="background-color: #f0f0f0; color: #333;" />
+                </MudItem>
+
+                <MudItem xs="12" Class="d-flex justify-end mt-3">
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="w-100"
+                               Style="background-color: #1976d2; color: #fff;">Iniciar Sesión</MudButton>
+                </MudItem>
+            </MudGrid>
+        </EditForm>
+
+        <!-- Mensaje de error si las credenciales son incorrectas -->
+        @if (showLeaveAlert)
+        {
+            <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="(() => CloseMe(true))"
+                      Class="mt-3" Style="background-color: #ffdddd; color: #d32f2f;">
+                Credenciales no reconocidas. Inténtalo nuevamente.
+            </MudAlert>
+        }
+
+        <!-- Enlace para recuperar contraseña -->
+        <MudText Typo="Typo.body2" Align="Align.Center" Class="mt-3">
+            <MudLink Href="#" Color="Color.Primary">¿Olvidaste tu contraseña?</MudLink>
+        </MudText>
+    </MudPaper>
+</MudContainer>
+
 
 @code {
-
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
     private bool showLeaveAlert = false;
@@ -38,41 +65,34 @@
     UserLogin user = new UserLogin();
     bool success;
 
-
     protected override async Task OnInitializedAsync()
     {
         var authState = await authenticationStateTask;
         var user = authState.User;
-        if (user.Identity != null)
+        if (user.Identity != null && user.Identity.IsAuthenticated)
         {
-            if (user.Identity.IsAuthenticated)
-            {
-                NavigationManager.NavigateTo($"/home");
-            }
+            NavigationManager.NavigateTo("/home");
         }
     }
 
     protected async Task OnValidSubmit()
     {
-        //var httpResponse = await Http.PostAsJsonAsync<UserLogin>("usuarios/Login", user); // .NET
-        var httpResponse = await Http.PostAsJsonAsync<UserLogin>("auth/login", user); // Java
+        var httpResponse = await Http.PostAsJsonAsync<UserLogin>("auth/login", user);
 
-        if (!(httpResponse.StatusCode == System.Net.HttpStatusCode.OK))
+        if (httpResponse.StatusCode != System.Net.HttpStatusCode.OK)
         {
             showLeaveAlert = true;
         }
         else
         {
             var contentResponse = await httpResponse.Content.ReadAsStringAsync();
-            //var token = contentResponse; // .NET
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true }; // java
-            var token = JsonSerializer.Deserialize<LoginResponse>(contentResponse, options); // java
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var token = JsonSerializer.Deserialize<LoginResponse>(contentResponse, options);
 
             if (token != null)
             {
-                await _localStorageService.SetItemAsync("token", token.Token); // Java
-                                                                               //await _localStorageService.SetItemAsync("token", token); // .NET
-                NavigationManager.NavigateTo($"home", forceLoad: true);
+                await _localStorageService.SetItemAsync("token", token.Token);
+                NavigationManager.NavigateTo("home", forceLoad: true);
             }
             else
             {

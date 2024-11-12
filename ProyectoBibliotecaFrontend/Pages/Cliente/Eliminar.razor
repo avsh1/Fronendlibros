@@ -13,11 +13,11 @@
                 <DataAnnotationsValidator />
                 <MudCard Style="background-color: #CFD8DC;">
                     <MudCardContent>
+                        <MudDatePicker Label="Fecha de Registro" @bind-Value="fechaRegistro" />
                         <MudTextField Label="Nombre" @bind-Value="cliente.Nombre" For="@(() => cliente.Nombre)" Disabled="true" />
                         <MudTextField Label="Dirección" @bind-Value="cliente.Direccion" For="@(() => cliente.Direccion)" Disabled="true" />
                         <MudTextField Label="Correo" @bind-Value="cliente.Correo" For="@(() => cliente.Correo)" Disabled="true" />
                         <MudTextField Label="Teléfono" @bind-Value="cliente.Telefono" For="@(() => cliente.Telefono)" Disabled="true" />
-                        <MudTextField Label="Fecha de Registro" @bind-Value="cliente.FechaRegistro" For="@(() => cliente.FechaRegistro)" InputType="InputType.Date" Disabled="true" />
                         <MudSelect Variant="Variant.Outlined" Label="Estado" @bind-Value="cliente.Estado">
                             <MudSelectItem Value="true">Activo</MudSelectItem>
                             <MudSelectItem Value="false">Inactivo</MudSelectItem>
@@ -43,6 +43,8 @@
     public int id { get; set; }
     private bool showLeaveAlert = false;
     private Cliente cliente = new Cliente();
+    private DateTime? fechaRegistro = DateTime.Today;
+
 
     protected override async Task OnInitializedAsync()
     {
