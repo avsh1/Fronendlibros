@@ -12,7 +12,7 @@
                 <DataAnnotationsValidator />
                 <MudCard Style="background-color: #CFD8DC;">
                     <MudCardContent>
-                        <MudDatePicker Label="Fecha de Registro" @bind-Value="fechaRegistro" />
+                        <MudTextField Label="Fecha de Registro" @bind-Value="cliente.FechaRegistro" For="@(() => cliente.FechaRegistro)" />
                         <MudTextField Label="Nombre" @bind-Value="cliente.Nombre" For="@(() => cliente.Nombre)" />
                         <MudTextField Label="Dirección" @bind-Value="cliente.Direccion" For="@(() => cliente.Direccion)" />
                         <MudTextField Label="Correo" @bind-Value="cliente.Correo" For="@(() => cliente.Correo)" />
@@ -68,7 +68,7 @@
 
     private async Task saveChanges()
     {
-        cliente.FechaRegistro = fechaRegistro;
+       
         var httpResponse = await httpClient.PutAsJsonAsync($"cliente/{cliente.Id}", cliente);
 
         if (httpResponse.StatusCode != System.Net.HttpStatusCode.OK)

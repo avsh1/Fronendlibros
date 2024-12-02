@@ -72,7 +72,7 @@
 
     private async Task getAll()
     {
-        var httpResponse = await httpClient.GetStringAsync("clientes/lista");
+        var httpResponse = await httpClient.GetStringAsync("cliente/lista");
         clientes = JsonSerializer.Deserialize<IEnumerable<Cliente>>(httpResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
 

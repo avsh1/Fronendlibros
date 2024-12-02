@@ -12,11 +12,11 @@
                 <DataAnnotationsValidator />
                 <MudCard Style="background-color: #CFD8DC;">
                     <MudCardContent>
-                        <MudDatePicker Label="Fecha de Registro" @bind-Value="fechaRegistro"/>
                         <MudTextField Label="Nombre" @bind-Value="cliente.Nombre" For="@(() => cliente.Nombre)" />
                         <MudTextField Label="Dirección" @bind-Value="cliente.Direccion" For="@(() => cliente.Direccion)" />
                         <MudTextField Label="Correo" @bind-Value="cliente.Correo" For="@(() => cliente.Correo)" />
                         <MudTextField Label="Teléfono" @bind-Value="cliente.Telefono" For="@(() => cliente.Telefono)" />
+                        <MudTextField Label="Fecha de Registro" @bind-Value="cliente.FechaRegistro" For="@(() => cliente.FechaRegistro)" />
                         <MudSelect Variant="Variant.Outlined" Label="Estado" AnchorOrigin="Origin.BottomCenter" @bind-Value="cliente.Estado">
                             <MudSelectItem Value="true">Activo</MudSelectItem>
                             <MudSelectItem Value="false">Inactivo</MudSelectItem>
@@ -37,9 +37,7 @@
 </MudGrid>
 
 @code {
-    private Cliente cliente = new Cliente(); 
-    private DateTime fechaRegistro = DateTime.Today;
-
+    private Cliente cliente = new Cliente();
     private bool showLeaveAlert = false;
 
     protected override async Task OnInitializedAsync()
@@ -51,14 +49,13 @@
     private async Task OnValidSubmit(EditContext context)
     {
         await save();
-
         StateHasChanged();
     }
 
     private async Task save()
     {
-        cliente.FechaRegistro = fechaRegistro;
-        var httpResponse = await httpClient.PostAsJsonAsync<Cliente>("clientes", cliente);
+
+        var httpResponse = await httpClient.PostAsJsonAsync<Cliente>("cliente", cliente);
 
         if (!(httpResponse.StatusCode == System.Net.HttpStatusCode.OK))
         {

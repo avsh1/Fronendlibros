@@ -13,9 +13,12 @@
                 <MudCardMedia Image="@libro.ImagenUrl" Height="180" Alt="@libro.Titulo" Style="object-fit: cover; cursor: pointer;"
                               OnClick="() => goToDetails(libro.Id)" />
                 <MudCardContent>
-                    <MudText Typo="Typo.subtitle1" Style="cursor: pointer;" OnClick="() => goToDetails(libro.Id)">
-                        @libro.ImagenUrl
-                    </MudText>
+                    <MudTextField Label="URL de la imagen" @bind-Value="libro.ImagenUrl" For="@(() => libro.ImagenUrl)" />
+                    @if (!string.IsNullOrEmpty(libro.ImagenUrl))
+                    {
+                        <img src="@libro.ImagenUrl" alt="Imagen del producto" style="max-width: 250px;" />
+                    }
+                    }
                 </MudCardContent>
             </MudCard>
         </MudItem>
